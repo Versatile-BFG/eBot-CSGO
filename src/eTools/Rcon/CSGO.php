@@ -39,8 +39,26 @@ class CSGO extends Rcon {
                 try {
                     return $this->server->rconExec($cmd);
                 } catch (\Exception $e) {
-                    Logger::error("Error while doing $cmd " . $e->getMessage());
-                    return false;
+					Logger::error("Error while doing $cmd " . $e->getMessage() . "| Trying to re-auth rcon. 1/3");
+                    $this->auth();
+                    try {
+                        return $this->server->rconExec($cmd);
+                    } catch (\Exception $e) {
+                       Logger::error("Error while doing $cmd " . $e->getMessage() . "| Trying to re-auth rcon. 2/3");
+						$this->auth();
+						try {
+							return $this->server->rconExec($cmd);
+						} catch (\Exception $e) {
+							Logger::error("Error while doing $cmd " . $e->getMessage() . "| Trying to re-auth rcon. 3/3");
+							$this->auth();
+							try {
+								return $this->server->rconExec($cmd);
+							} catch (\Exception $e) {
+								Logger::error("Error while doing $cmd " . $e->getMessage());
+								return false;
+						   }
+						}
+					}
                 }
             }
         }
