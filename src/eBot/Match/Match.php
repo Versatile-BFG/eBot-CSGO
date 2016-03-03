@@ -626,9 +626,9 @@ class Match implements Taskable {
             }
 			try {
 				$testmap = $this->rcon->send("host_map");
-				if (preg_match('!"host_map" = "(.*)"!', $testmap, $match)) {
-					$this->rcon->send("say " . $testmap);
-					if(strpos($this->currentMap->getMapName(), $match[1]) !== false) {
+				if (preg_match('!"host_map" = "(.*.bsp)"!', $testmap, $match)) {
+					$testmap2 = $this->currentMap->getMapName().".bsp";
+					if(strpos($testmap2, $match[1]) !== false) {
 						$tempmap = true;
 					}
 				}
@@ -643,8 +643,10 @@ class Match implements Taskable {
 				else
 					$this->rcon->send("changelevel " . $this->currentMap->getMapName());
 			} else {
+				$this->addLog("Map is currently set to " . $this->currentMap->getMapName());
 				$this->rcon->send("mp_restartgame 1;");
 			}
+			
 			if ($this->config_kniferound) {
 				$this->setStatus(self::STATUS_WU_KNIFE, true);
 				$this->currentMap->setStatus(Map::STATUS_WU_KNIFE, true);
