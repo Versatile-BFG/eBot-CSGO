@@ -608,6 +608,7 @@ class Match implements Taskable {
      * Engaging the first map
      */
     private function engageMap() {
+		$tempmap = false;
         $this->timeEngageMap = 0;
         if ($this->currentMap == null) {
             $this->addLog("Can't engage the map, map is null");
@@ -623,21 +624,33 @@ class Match implements Taskable {
             if ($this->config_full_score) {
                 $this->rcon->send("mp_match_can_clinch 0;");
             }
-
+			try {
+				$testmap = $this->rcon->send("host_map");
+				if (preg_match('!"host_map" = "(.*)"!', $text, $match)) {
+					if(strpos($this->currentMap->getMapName(), $match[1]) !== false) {
+						$tempmap = true;
+					}
+				}
+			} catch (\Exception $ex) {
+				Logger::error("Error while getting current map information");
+			}
             // Changing map
-            $this->addLog("Changing map to " . $this->currentMap->getMapName());
-            if (\eBot\Config\Config::getInstance()->getWorkshop() && \eBot\Config\Config::getInstance()->getWorkshopByMap($this->currentMap->getMapName()))
-                $this->rcon->send("changelevel workshop/" . \eBot\Config\Config::getInstance()->getWorkshopByMap($this->currentMap->getMapName()) . "/" . $this->currentMap->getMapName());
-            else
-                $this->rcon->send("changelevel " . $this->currentMap->getMapName());
-
-            if ($this->config_kniferound) {
-                $this->setStatus(self::STATUS_WU_KNIFE, true);
-                $this->currentMap->setStatus(Map::STATUS_WU_KNIFE, true);
-            } else {
-                $this->setStatus(self::STATUS_WU_1_SIDE, true);
-                $this->currentMap->setStatus(Map::STATUS_WU_1_SIDE, true);
-            }
+			if ($tempmap === false) {
+				$this->addLog("Changing map to " . $this->currentMap->getMapName());
+				if (\eBot\Config\Config::getInstance()->getWorkshop() && \eBot\Config\Config::getInstance()->getWorkshopByMap($this->currentMap->getMapName()))
+					$this->rcon->send("changelevel workshop/" . \eBot\Config\Config::getInstance()->getWorkshopByMap($this->currentMap->getMapName()) . "/" . $this->currentMap->getMapName());
+				else
+					$this->rcon->send("changelevel " . $this->currentMap->getMapName());
+			} else {
+				$this->rcon->send("mp_restartgame 1;");
+			}
+			if ($this->config_kniferound) {
+				$this->setStatus(self::STATUS_WU_KNIFE, true);
+				$this->currentMap->setStatus(Map::STATUS_WU_KNIFE, true);
+			} else {
+				$this->setStatus(self::STATUS_WU_1_SIDE, true);
+				$this->currentMap->setStatus(Map::STATUS_WU_1_SIDE, true);
+			}
 
             $this->mapIsEngaged = true;
 
