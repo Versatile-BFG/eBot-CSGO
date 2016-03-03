@@ -626,7 +626,8 @@ class Match implements Taskable {
             }
 			try {
 				$testmap = $this->rcon->send("host_map");
-				if (preg_match('!"host_map" = "(.*)"!', $text, $match)) {
+				if (preg_match('!"host_map" = "(.*)"!', $testmap, $match)) {
+					$this->rcon->send("say " . $testmap);
 					if(strpos($this->currentMap->getMapName(), $match[1]) !== false) {
 						$tempmap = true;
 					}
