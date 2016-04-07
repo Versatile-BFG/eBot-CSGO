@@ -694,7 +694,7 @@ class Match implements Taskable {
                 $teamB = strtoupper($this->side['team_b']);
 
                 if ($this->continue[$this->side['team_a']])
-                    $teamA = $this->formatText($teamA, "green")
+                    $teamA = $this->formatText($teamA, "green");				
                 if ($this->continue[$this->side['team_b']])
                     $teamB = $this->formatText($teamB, "green");
                 $this->lastMessage = time();
@@ -719,7 +719,7 @@ class Match implements Taskable {
                     $teamB = strtoupper($this->side['team_b']);
 
                     if ($this->ready[$this->side['team_a']])
-                        $teamA = $this->formatText($teamA, "green")
+                        $teamA = $this->formatText($teamA, "green");
                     if ($this->ready[$this->side['team_b']])
                         $teamB = $this->formatText($teamB, "green");
 
@@ -1220,7 +1220,7 @@ class Match implements Taskable {
                 }
 
                 if ($count > 0) {
-                    $this->say_player($message->userId, "$messageText")
+                    $this->say_player($message->userId, "$messageText");
                 }
 
                 if ($doit) {
@@ -1315,7 +1315,7 @@ class Match implements Taskable {
             }
         } elseif ($this->isWarmupRound() && $this->mapIsEngaged && $this->isCommand($message, "ready")) {
 			if ($this->config_streamer && !$this->getStreamerReady()) {
-				$this->say("Streamers are not ready yet.", "red")
+				$this->say("Streamers are not ready yet.", "red");
 				$this->say("Please wait until they are ready.");
 			} else {
 				if ($message->getUserTeam() == "CT") {
@@ -3011,7 +3011,7 @@ class Match implements Taskable {
     public function adminStop() {
         $this->addLog("Match stopped by admin.");
         $this->addMatchLog("Match stopped by admin.");
-        $this->say("Match stopped by admin.", "red")
+        $this->say("Match stopped by admin.", "red");
 
         $this->rcon->send("mp_restartgame 1");
 
